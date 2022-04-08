@@ -1,0 +1,48 @@
+#https://www.youtube.com/watch?v=ziNXj9CrCQM&t=247s
+version:  '3.7'
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+
+    ports:  #Apunta internamente hacia el puerto 80
+      - 8888:80
+    volumes:  #Min 4
+      - ./src:/var/www/html 
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # Apunta al archivo de configuracion del nginx
+    depends_on: # Min 5:16
+      - php
+      - mysql
+    networks: #min 5:44
+      - laravel
+
+  mysql: #Min 10
+    image: mysql:5.7
+    container_name : mysql
+    restart: always #Min 6:30
+    environment: # Min 7:02
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: admin.port
+    ports: # Min 8:13
+      - 33069:3306
+    volumes: # Min 8:47
+      - ./mysql:/var/lib/mysql
+    networks:  #Min 9:10
+      - laravel
+
+  php : #Min 9:35
+    build:
+      context : .
+      dockerfile : Dockerfile
+    container_name: php
+    volumes: # Min10:25
+      - ./src:/var/www/html
+    ports:
+      - 9000:80
+    networks:
+      - laravel
+    
+networks:  #Min 11:20
+  laravel:
